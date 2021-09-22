@@ -9,7 +9,7 @@ use \Bitrix\Main\UserGroupTable;
 
 /**
  * Класс компонента вывода списка групп пользователей
- * @method
+ * @method getGroups - основной метод для выборки групп с количеством пользователей
  */
 class CompanyUsergroupsComponent extends CBitrixComponent
 {
@@ -19,7 +19,7 @@ class CompanyUsergroupsComponent extends CBitrixComponent
      */
     public function onPrepareComponentParams($params): array
     {
-        if ($params['CACHE_TYPE'] != 'Y') {
+        if ($params['CACHE_TYPE'] == 'N') {
             $params['CACHE_TIME'] = 0;
         }
 
@@ -65,11 +65,9 @@ class CompanyUsergroupsComponent extends CBitrixComponent
                 $groupData[$result['GROUP_ID']]['COUNT'] = intval($result['countElements']);
             }
 
-            if (defined("BX_COMP_MANAGED_CACHE")) {
-                $cacheManager->StartTagCache($cacheDir);
-                $cacheManager->RegisterTag("USER_CARD");
-                $cacheManager->EndTagCache();
-            }
+            $cacheManager->StartTagCache($cacheDir);
+            $cacheManager->RegisterTag("USER_CARD");
+            $cacheManager->EndTagCache();
 
             if (empty($groupData))
                 $cache->abortDataCache();
