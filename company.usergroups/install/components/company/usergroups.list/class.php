@@ -9,7 +9,7 @@ use \Bitrix\Main\UserGroupTable;
 
 /**
  * Класс компонента вывода списка групп пользователей
- * @method getGroups - основной метод для выборки групп с количеством пользователей
+ * method getGroups - основной метод для выборки групп с количеством пользователей
  */
 class CompanyUsergroupsComponent extends CBitrixComponent
 {
