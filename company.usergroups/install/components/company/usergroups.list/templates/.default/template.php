@@ -2,6 +2,8 @@
 
 use Bitrix\Main\Localization\Loc;
 
+Loc::loadMessages(__FILE__);
+
 if (count($arResult['GROUP_LIST']) > 0) { ?>
     <table class="">
         <thead>
