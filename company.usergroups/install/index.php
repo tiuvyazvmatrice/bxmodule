@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\Application;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
@@ -14,8 +15,7 @@ class company_usergroups extends CModule
 
         include __DIR__ . '/version.php';
 
-        if (is_array($arModuleVersion) && array_key_exists('VERSION', $arModuleVersion))
-        {
+        if (is_array($arModuleVersion) && array_key_exists('VERSION', $arModuleVersion)) {
             $this->MODULE_VERSION = $arModuleVersion['VERSION'];
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         }
@@ -45,13 +45,22 @@ class company_usergroups extends CModule
         ModuleManager::unRegisterModule($this->MODULE_ID);
     }
 
-    public function installFiles() {
-        $this->COMPONENT_PATH = $this->makeDir($_SERVER['DOCUMENT_ROOT'].'/local/components') ? $_SERVER['DOCUMENT_ROOT'].'/local/components' : $_SERVER['DOCUMENT_ROOT'].'/bitrix/components';
+    public function installFiles()
+    {
+        $this->COMPONENT_PATH = $this->makeDir($_SERVER['DOCUMENT_ROOT'] . '/local/components') ? $_SERVER['DOCUMENT_ROOT'] . '/local/components' : $_SERVER['DOCUMENT_ROOT'] . '/bitrix/components';
 
-        CopyDirFiles(__DIR__.'/components/', $this->COMPONENT_PATH, true, true);
+        CopyDirFiles(__DIR__ . '/components/', $this->COMPONENT_PATH, true, true);
+
+        $publicGrouplistPath = $_SERVER['DOCUMENT_ROOT'] . '/grouplist/';
+
+        if (!is_dir($$publicGrouplistPath)) {
+            $this->makeDir($publicGrouplistPath);
+            CopyDirFiles(__DIR__ . '/public/', $_SERVER['DOCUMENT_ROOT'], true, true);
+        }
     }
 
-    public function uninstallFiles() {
+    public function uninstallFiles()
+    {
         DeleteDirFilesEx('/local/components/company/');
         DeleteDirFilesEx('/bitrix/components/company/');
     }
