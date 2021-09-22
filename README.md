@@ -1,9 +1,9 @@
 # bxmodule
 
-##Модуль копирует компонент, а так-же в публичной части создает раздел /grouplist/
-##в котором производит вызов компонента
+## Модуль копирует компонент, а так-же в публичной части создает раздел /grouplist/ в котором производит вызов компонента
 
-<$APPLICATION->IncludeComponent(
+<
+$APPLICATION->IncludeComponent(
 "company:usergroups.list",
 ".default",
 [
@@ -12,4 +12,5 @@
 "CACHE_TIME" => "36000000"
 ],
 false
-);>
+);
+>
