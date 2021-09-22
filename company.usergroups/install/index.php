@@ -53,7 +53,7 @@ class company_usergroups extends CModule
 
         $publicGrouplistPath = $_SERVER['DOCUMENT_ROOT'] . '/grouplist/';
 
-        if (!is_dir($$publicGrouplistPath)) {
+        if (!is_dir($publicGrouplistPath)) {
             $this->makeDir($publicGrouplistPath);
             CopyDirFiles(__DIR__ . '/public/', $_SERVER['DOCUMENT_ROOT'], true, true);
         }
