@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="bx.amelin7j.beget.tech" id="7fb649eb-d456-427f-9523-b5bde6153ce7" port="22" customName="obege" nameFormat="CUSTOM" username="amelin7j">
+        <option name="customName" value="obege" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

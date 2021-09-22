@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9ef424dc-6794-41bf-be68-8332da953959" name="obege" url="http://bx.amelin7j.beget.tech/">
+        <fileTransfer rootFolder="/home/a/amelin7j/bx.amelin7j.beget.tech/" accessType="SFTP" host="bx.amelin7j.beget.tech" port="22" sshConfigId="7fb649eb-d456-427f-9523-b5bde6153ce7" sshConfig="obege">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
