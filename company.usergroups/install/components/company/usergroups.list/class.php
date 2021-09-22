@@ -3,6 +3,9 @@
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Application;
+use Bitrix\Main\Data\Cache;
+use \Bitrix\Main\GroupTable;
+use \Bitrix\Main\UserGroupTable;
 
 /**
  * Класс компонента вывода списка групп пользователей
@@ -16,40 +19,69 @@ class CompanyUsergroupsComponent extends CBitrixComponent
      */
     public function onPrepareComponentParams($params): array
     {
+        if ($params['CACHE_TYPE'] != 'Y') {
+            $params['CACHE_TIME'] = 0;
+        }
+
         return $params;
     }
 
-    private function getGroups(): array {
-        $groupsList = [];
+    private function getGroups(): array
+    {
+        $cacheManager = Bitrix\Main\Application::getInstance()->getTaggedCache();
+        $cache = Cache::createInstance();
 
-        $result = \Bitrix\Main\GroupTable::getList(array(
+        $cacheDir = '/usergroups/';
 
-            'filter' => array('ACTIVE'=>'Y', /*'USER_GROUP.USER.ACTIVE' => 'Y'*/),
+        if ($cache->initCache($this->arParams['CACHE_TIME'], 'usergroups', $cacheDir)) {
+            $vars = $cache->GetVars();
+            $groupData = $vars['arResult'];
+        } elseif ($cache->startDataCache()) {
+            $groups = GroupTable::getList(array(
+                'filter' => ['ACTIVE' => 'Y'],
+                'select' => ['NAME', 'ID'],
+                'group' => ['ID'],
+                'cache' => ['ttl' => $this->arParams['CACHE_TIME']],
+            ));
 
-            'select' => array('NAME','ID','USER_ACTIVE' => 'USER_GROUP.USER.ACTIVE','USER_GROUP.GROUP_ID', 'USER_GROUP.USER_ID', 'countElements'), // выбираем идентификатор группы и символьный код группы
+            while ($result = $groups->fetch()) {
+                $groupData[$result['ID']] = $result;
+                $groupData[$result['ID']]['COUNT'] = 0;
+            }
 
-            'runtime' => [
-                'USER_GROUP' => [
-                    'data_type' =>"\Bitrix\Main\UserGroupTable",
-                    'reference' => [
-                        '=this.ID' => 'ref.GROUP_ID',
+            $userGroup = UserGroupTable::getList(array(
+                'filter' => array('GROUP_ID' => array_keys($groupData), 'USER.ACTIVE' => 'Y', 'USER_ID'),
+                'select' => array('GROUP_ID', 'countElements'),
+                'runtime' => [
+                    'countElements' => [
+                        'data_type' => 'integer',
+                        'expression' => ['count(distinct %s)', 'USER_ID'],
                     ],
-                    'join_type' => 'LEFT'
                 ],
-                'countElements' => [
-                    'data_type' => 'integer',
-                    'expression' => ['count(%s)', 'USER_GROUP.USER_ID']
-                ]
-            ],
-            'group' => ['USER_GROUP.GROUP_ID']
-        ));
+                'cache' => ['ttl' => $this->arParams['CACHE_TIME']],
+            ));
 
-        while ($groups = $result->fetch()) {
-            $groupsList[] = $groups;
+            while ($result = $userGroup->fetch()) {
+                $groupData[$result['GROUP_ID']]['COUNT'] = intval($result['countElements']);
+            }
+
+            if (defined("BX_COMP_MANAGED_CACHE")) {
+                $cacheManager->StartTagCache($cacheDir);
+                $cacheManager->RegisterTag("USER_CARD");
+                $cacheManager->EndTagCache();
+            }
+
+            if (empty($groupData))
+                $cache->abortDataCache();
+
+            $cache->endDataCache([
+                'arResult' => $groupData,
+            ]);
         }
 
-        return $groupsList;
+        return $groupData;
     }
+
 
     function executeComponent(): void
     {
